@@ -28,3 +28,21 @@ Understanding allowed, transferFrom() and approve()
 3. If B wants later to transfer 20 tokens from A to its account, B will execute transferFrom(address_of_A, address_of_B,20)
 
 - After calling the transferFrom() function (byB) the balance of A decreases by 20 and the balance of B increases by 20, which in turn the allowed mapping will contains: allowed[address_of_A][address_of_B] = 80
+
+ICO Smart Contract
+
+- ICO smart contract will accept ETH in exchange for the ERC20 Test (TST) token found here: https://github.com/seanmayer/ERC20-Token
+- The TST token is a fully compliant ERC20 token
+- TST will be generated at ICO time
+- Investors will send ETH to the ICO contract's address, in return they get an amount of TST tokens
+
+- TST token price in wei is: 1TST = 0.001ETH = 10**15 wei, 1ETH = 1000 TST
+- The minimum investment is 0.01ETH and maximum investment 5ETH
+- The ICO Hardcap is 300ETH
+- ICO will have an admin, that specifies when ICO starts and ends
+- TST token will be tradable only after a specific time set by the admin
+
+- For an emergency the admin can stop the ICO 
+- Can also change the deposit address in case it comprimised
+- Also adding the ability to burn the tokens that were not sold in ICO
+- After investment is made into the ICO the event will be emitted
