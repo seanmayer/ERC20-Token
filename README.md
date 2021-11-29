@@ -46,3 +46,15 @@ ICO Smart Contract
 - Can also change the deposit address in case it comprimised
 - Also adding the ability to burn the tokens that were not sold in ICO
 - After investment is made into the ICO the event will be emitted
+
+Locking up Tokens
+
+- Token lock up is being done for a period of time after the ICO ends
+- This reduces the likelyhood of a price crash if investors descide to sell straight away at the same time
+- The tokens should not be transferable straight away
+
+Burning Tokens
+
+- Burn can be called by anyone to initiate
+- The token burn can be done after ICO completes
+- Burning tokens can be used for a deflationary use, therefore this creates a higher value token

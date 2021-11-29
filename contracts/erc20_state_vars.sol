@@ -18,8 +18,7 @@ interface ERC20Interface {
     function transferFrom(address from, address to, uint tokens) external returns (bool success);
     
     event Transfer(address indexed from, address indexed to, uint tokens);
-    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
-    
+    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);  
 }
 
 contract TestToken is ERC20Interface {
@@ -44,18 +43,17 @@ contract TestToken is ERC20Interface {
         return balances[tokenOwner];
     }
     
-    function transfer(address to, uint tokens) public override returns (bool success) {
+    function transfer(address to, uint tokens) public virtual override returns (bool success) {
         require(balances[msg.sender] >= tokens);
         
         balances[to] += tokens;
         balances[msg.sender] -= tokens;
         emit Transfer(msg.sender, to, tokens);
         
-        return true;
-        
+        return true;     
     }
     
-    function allowance(address tokenOwner, address spender) view public override returns(uint) {
+    function allowance(address tokenOwner, address spender) public view override returns(uint) {
         return allowed[tokenOwner][spender];
     }
     
@@ -69,7 +67,7 @@ contract TestToken is ERC20Interface {
         return true;
     }
     
-    function transferFrom(address from, address to, uint tokens) public override returns (bool success) {
+    function transferFrom(address from, address to, uint tokens) public virtual override returns (bool success) {
         require(allowed[from][to] >= tokens);
         require(balances[from] >= tokens);
         
@@ -78,7 +76,6 @@ contract TestToken is ERC20Interface {
         allowed[from][to] -= tokens;
         
         return true;
-        
     }
 }
 
@@ -123,7 +120,7 @@ contract TestTokenICO is TestToken {
     function getCurrentState() public view returns(State) {
         if(icoState == State.halted) { 
             return State.halted; 
-            } else if (block.timestamp < saleEnd) {
+            } else if (block.timestamp < saleStart) {
                 return State.beforeStart;
             } else if (block.timestamp >= saleStart &&  block.timestamp <= saleEnd) {
                 return State.running;
@@ -137,8 +134,8 @@ contract TestTokenICO is TestToken {
     function invest() payable public returns(bool) {
         icoState = getCurrentState();
         require(icoState == State.running);
-
         require(msg.value >= minInvestment && msg.value <= maxInvestment);
+        
         raisedAmount += msg.value;
         require(raisedAmount <= hardCap);
 
@@ -150,12 +147,29 @@ contract TestTokenICO is TestToken {
         emit Invest(msg.sender, msg.value, tokens);
 
         return true;
-
     }
 
     receive() payable external {
         invest();
     }
 
+    function transfer(address to, uint tokens) public override returns (bool success) {
+        require(block.timestamp > tokenTradeStart);
+        super.transfer(to,tokens);
+        return true;
+    }
+
+    function transferFrom(address from, address to, uint tokens) public override returns (bool success) {
+        require(block.timestamp > tokenTradeStart);
+        super.transferFrom(from,to,tokens);
+        return true;
+    }
+
+    function burn() public returns(bool) {
+        icoState = getCurrentState();
+        require(icoState == State.afterEnd);
+        balances[founder] = 0;
+        return true;
+    }
 
 }
